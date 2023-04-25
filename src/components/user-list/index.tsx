@@ -19,7 +19,7 @@ export const UserList = ({ users }: UserListProps) => {
       <tbody>
         {users.length > 0 && users.map((user, key) => (
           <tr key={`${user.email}_${key}`}>
-            <td><img src={user.picture.thumbnail} alt="this-is-a-img-thumbnail-from-random-users" width={'100%'} /></td>
+            <td><img src={user.picture.thumbnail} alt="this-is-a-img-thumbnail-from-random-users" width={'64px'} height={'64px'} /></td>
             <td>{user.name.first}</td>
             <td>{user.name.last}</td>
             <td>{user.location.country}</td>
