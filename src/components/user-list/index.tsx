@@ -2,9 +2,10 @@ import { type User } from '../../types/random-user'
 
 interface UserListProps {
   users: User[]
+  handleDelete: (email: string) => void
 }
 
-export const UserList = ({ users }: UserListProps) => {
+export const UserList = ({ users, handleDelete }: UserListProps) => {
   return (
     <table width={'100%'}>
       <thead>
@@ -23,7 +24,7 @@ export const UserList = ({ users }: UserListProps) => {
             <td>{user.name.first}</td>
             <td>{user.name.last}</td>
             <td>{user.location.country}</td>
-            <td>{user.id.value}</td>
+            <td>{user.id.value} {user.email}<button onClick={() => { handleDelete(user.email) }}>remove</button></td>
           </tr>
         ))
         }
