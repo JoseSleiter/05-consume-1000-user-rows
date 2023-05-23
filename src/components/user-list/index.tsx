@@ -1,19 +1,21 @@
-import { type User } from '../../types/random-user'
+import { type User, SortBy } from '../../types/random-user'
+// import { SortBy } from '../../types/ux'
 
 interface UserListProps {
   users: User[]
   handleDelete: (email: string) => void
+  changeSorting: (sort: SortBy) => void
 }
 
-export const UserList = ({ users, handleDelete }: UserListProps) => {
+export const UserList = ({ users, handleDelete, changeSorting }: UserListProps) => {
   return (
     <table width={'100%'}>
       <thead>
         <tr>
           <th>Foto</th>
-          <th>Nombre</th>
-          <th>Apellido</th>
-          <th>Pais</th>
+          <th onClick={() => { changeSorting(SortBy.NAME) }}>Nombre</th>
+          <th onClick={() => { changeSorting(SortBy.LASTNAME) }}>Apellido</th>
+          <th onClick={() => { changeSorting(SortBy.COUNTRY) }}>Pais</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -24,7 +26,7 @@ export const UserList = ({ users, handleDelete }: UserListProps) => {
             <td>{user.name.first}</td>
             <td>{user.name.last}</td>
             <td>{user.location.country}</td>
-            <td>{user.id.value} {user.email}<button onClick={() => { handleDelete(user.email) }}>remove</button></td>
+            <td><button onClick={() => { handleDelete(user.email) }}>remove</button></td>
           </tr>
         ))
         }

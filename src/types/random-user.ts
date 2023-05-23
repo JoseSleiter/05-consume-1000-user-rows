@@ -86,3 +86,10 @@ export interface Picture {
   medium: string
   thumbnail: string
 }
+
+export enum SortBy {
+  NONE = 'none',
+  NAME = 'name',
+  LASTNAME = 'last',
+  COUNTRY = 'country'
+}

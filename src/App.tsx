@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { UserList } from './components/user-list'
-import { type User } from './types/random-user'
+import { type User, SortBy } from './types/random-user'
+// import { SortBy } from './types/ux'
 
 const API_URL = 'https://randomuser.me/api?results=10'
 
+// eslint-disable-next-line @typescript-eslint/space-before-function-paren
 function App() {
   const [users, setUsers] = useState<User[]>([])
-  const [orderByCountry, setOrderByCountry] = useState<boolean>(false)
+  const [sorting, setSorting] = useState<SortBy>(SortBy.NONE)
   const [nameCountryFilter, setNameCountryFilter] = useState<string | null>(null)
 
   const originalUSers = useRef<User[]>([])
@@ -34,6 +36,10 @@ function App() {
     const filteredUsers = users.filter(user => user.email !== email)
     setUsers(filteredUsers)
   }
+  const handleSorting = () => {
+    const newSorting = sorting === SortBy.NONE ? SortBy.COUNTRY : SortBy.NONE
+    setSorting(newSorting)
+  }
 
   const filteredUsers = useMemo(() => {
     return typeof nameCountryFilter === 'string' && nameCountryFilter.length > 0
@@ -42,22 +48,31 @@ function App() {
   }, [nameCountryFilter, users])
 
   const sortedUsers = useMemo(() => {
-    return orderByCountry
-      ? [...filteredUsers].sort((userA, userB) => userA.location.country.localeCompare(userB.location.country))
+    const sortingObject: Record<string, (userA: User, userB: User) => number> = {
+      [SortBy.COUNTRY]: (userA: User, userB: User) => userA.location.country.localeCompare(userB.location.country),
+      [SortBy.NAME]: (userA: User, userB: User) => userA.name.first.localeCompare(userB.name.first),
+      [SortBy.LASTNAME]: (userA: User, userB: User) => userA.name.last.localeCompare(userB.name.last)
+    }
+
+    return sorting !== SortBy.NONE
+      ? [...filteredUsers].sort(sortingObject[sorting])
       : filteredUsers
-  }, [filteredUsers, orderByCountry])
+  }, [filteredUsers, sorting])
 
   return (
     <>
       <div>
         <header>
           <button onClick={() => { }}>Show color</button>
-          <button onClick={() => { setOrderByCountry(!orderByCountry) }}>Order by country</button>
+          <button onClick={() => { handleSorting() }}>Order by country</button>
           <button onClick={() => { handleReset() }}>Reset list</button>
-          <input type="text" placeholder={'Colombia, Ecutador, etc...'} onChange={(e) => { setNameCountryFilter(e.target.value) }} />
+          <div>
+            <label htmlFor="">Filter by country name</label>
+            <input type="text" placeholder={'Colombia, Ecutador, etc...'} onChange={(e) => { setNameCountryFilter(e.target.value) }} />
+          </div>
         </header>
         <main>
-          <UserList users={sortedUsers} handleDelete={handleDelete} />
+          <UserList users={sortedUsers} handleDelete={handleDelete} changeSorting={setSorting} />
         </main>
       </div>
     </>
